@@ -24,6 +24,9 @@ h2{font-family:Georgia,serif;color:var(--g2);font-size:clamp(1.5rem,3vw,2rem);li
 .modal{display:none;position:fixed;inset:0;z-index:3000;background:rgba(3,12,9,.76);padding:20px 10px;overflow:auto}.modal.open{display:block}.modalbox{max-width:590px;margin:35px auto;background:#fffdf8;border-radius:15px;border-top:5px solid var(--gold);box-shadow:0 20px 70px rgba(0,0,0,.35);padding:28px;position:relative}.close{position:absolute;top:7px;right:13px;background:none;border:0;font-size:30px;cursor:pointer}.field{margin-top:14px}.field label{display:block;font-weight:700;margin-bottom:5px}.field input,.field textarea,.field select{width:100%;border:1px solid #bdb8aa;border-radius:8px;background:#fff;padding:11px 12px}.field textarea{min-height:145px}.submit{margin-top:17px;border:0;background:var(--g2);color:#fff;padding:12px 20px;border-radius:999px;font-weight:800;cursor:pointer}
 .lightbox{display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.91);padding:25px;align-items:center;justify-content:center;flex-direction:column}.lightbox.open{display:flex}.lightbox img{max-width:94vw;max-height:78vh;object-fit:contain;border-radius:8px}.lightbox p{max-width:900px;color:#fff;text-align:center;line-height:1.5}.lbclose{position:absolute;top:12px;right:18px;background:none;border:0;color:#fff;font-size:38px;cursor:pointer}
 @media(max-width:760px){.hero{min-height:305px;padding:48px 17px 42px}.langbar button{font-size:.76rem;padding:7px 9px}main{width:100%;margin:17px 0 0;border-radius:0;border-inline:0}.content{padding:33px 18px 45px}.phases,.gallery{grid-template-columns:1fr}.card img{height:auto;max-height:620px}.comments{padding:18px 14px}.report{right:9px;bottom:9px;font-size:.82rem}}
+
+/* Eigener Kommentarbereich (Cloudflare Worker + D1) */
+.comment-list{display:grid;gap:14px;margin:22px 0 28px}.comment-item{background:linear-gradient(135deg,#fbfaf5,#fffdf8);border:1px solid #e1dac8;border-radius:13px;padding:16px 18px;box-shadow:0 5px 16px rgba(31,39,34,.06)}.comment-head{display:flex;align-items:center;gap:10px;margin-bottom:9px}.comment-avatar{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--g2),var(--g3));color:#f3d98e;font-weight:800;border:1px solid #c9a954}.comment-item strong{display:block;color:var(--g2);font-size:.98rem}.comment-item p{margin:0;color:#343a36;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}.comment-form{display:grid;gap:11px;margin-top:20px;padding:18px;background:#f7f3e8;border:1px solid #e2d8bf;border-radius:13px}.comment-form input,.comment-form textarea{width:100%;box-sizing:border-box;border:1px solid #c9c1ae;border-radius:9px;padding:12px 13px;background:#fff;color:var(--ink);font:inherit;outline:none}.comment-form input:focus,.comment-form textarea:focus{border-color:#9b7c35;box-shadow:0 0 0 3px rgba(202,168,82,.16)}.comment-form textarea{min-height:120px;resize:vertical}.comment-form button{justify-self:start;border:1px solid #b89545;border-radius:999px;padding:11px 18px;background:linear-gradient(135deg,#0b3028,#185342);color:#fff;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 5px 14px rgba(17,49,40,.12)}.comment-form button:hover{filter:brightness(1.05)}.comment-form button:disabled{opacity:.55;cursor:default}.comment-status{min-height:1.4em;margin:3px 0 0}.comment-hp{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important}
 </style>
 </head>
 <body>
@@ -40,7 +43,15 @@ h2{font-family:Georgia,serif;color:var(--g2);font-size:clamp(1.5rem,3vw,2rem);li
 <div id="story"></div>
 <section><h2 id="gallerytitle"></h2><p class="muted" id="galleryintro"></p><div class="gallery" id="gallery"></div><div class="anon" id="anon"></div></section>
 <section class="forum"><h2 id="forumtitle"></h2><p id="forumtext"></p><a class="goldbtn" id="forumbtn" target="_blank" rel="noopener" href="https://tahdir-wa-tajarib.freeforums.net/thread/2/tajarib-tahdhirat-ihtiyal-atifi-zawaj"></a></section>
-<section class="comments"><h2 id="commentstitle"></h2><p class="muted" id="commentshelp"></p><div id="cusdis_thread" data-host="https://cusdis.com" data-app-id="df531db3-63e6-4417-820f-8695ccdcd5c2" data-page-id="yasmine-erfahrungen-main" data-page-url="" data-page-title="Yasmine – Erfahrungen und Warnungen"></div></section>
+<section class="comments"><h2 id="commentstitle"></h2><p class="muted" id="commentshelp"></p>
+<div id="commentsList" class="comment-list"><p class="muted" id="commentsLoading"></p></div>
+<form id="commentForm" class="comment-form">
+<input id="commentName" name="name" maxlength="80" required autocomplete="name">
+<textarea id="commentText" name="comment" maxlength="3000" required></textarea>
+<div class="comment-hp" aria-hidden="true"><label>Website<input id="commentWebsite" name="website" tabindex="-1" autocomplete="off"></label></div>
+<button id="commentSend" type="submit"></button>
+<p id="commentStatus" class="comment-status muted" role="status"></p>
+</form></section>
 <section><h2 id="legaltitle"></h2><div id="legal"></div></section>
 <div class="closing" id="closing"></div><div class="dua">حَسْبِيَ اللَّهُ وَنِعْمَ الْوَكِيلُ</div>
 </div></main>
@@ -164,7 +175,7 @@ function setLang(lang){
  title.textContent=x.title;subtitle.textContent=x.subtitle;countlabel.textContent=x.visitor;story.innerHTML=x.story();
  gallerytitle.textContent=x.galleryTitle;galleryintro.textContent=x.galleryIntro;anon.textContent=x.anon;
  forumtitle.textContent=x.forumTitle;forumtext.textContent=x.forumText;forumbtn.textContent=x.forumBtn;
- commentstitle.textContent=x.commentsTitle;commentshelp.textContent=x.commentsHelp;legaltitle.textContent=x.legalTitle;legal.innerHTML=x.legal;
+ commentstitle.textContent=x.commentsTitle;commentshelp.textContent=x.commentsHelp;updateCommentUi(lang);legaltitle.textContent=x.legalTitle;legal.innerHTML=x.legal;
  closing.textContent=x.closing;footer.textContent=x.footer;reportbtn.textContent=x.reportBtn;reporttitle.textContent=x.reportTitle;reporthelp.textContent=x.reportHelp;
  lname.textContent=x.name;lemail.textContent=x.email;lreason.textContent=x.reason;lmessage.textContent=x.message;send.textContent=x.send;
  rreason.innerHTML="";x.reasons.forEach((r,i)=>{let o=document.createElement("option");o.value=i?r:"";o.textContent=r;rreason.appendChild(o)});
@@ -175,9 +186,50 @@ function openReport(){modal.classList.add("open")}function closeReport(){modal.c
 modal.addEventListener("click",e=>{if(e.target===modal)closeReport()});
 function openLb(src,cap){lbimg.src=src;lbimg.alt=cap;lbcap.textContent=cap;lightbox.classList.add("open")}function closeLb(){lightbox.classList.remove("open")}
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeReport();closeLb()}});
-cusdis_thread.dataset.pageUrl=location.origin+location.pathname;
+const COMMENTS_API="https://yasmine-comments.gabgabgab123.workers.dev";
+const COMMENTS_PAGE="yasmine-erfahrungen-main";
+const commentUi={
+ de:{name:"Name oder Pseudonym",text:"Kommentar",send:"Kommentar senden",loading:"Kommentare werden geladen …",empty:"Noch keine Kommentare.",pending:"Kommentar gespeichert. Er wird nach Freigabe veröffentlicht.",error:"Kommentar konnte nicht gesendet werden."},
+ en:{name:"Name or pseudonym",text:"Comment",send:"Send comment",loading:"Loading comments …",empty:"No comments yet.",pending:"Comment saved. It will appear after approval.",error:"The comment could not be sent."},
+ fr:{name:"Nom ou pseudonyme",text:"Commentaire",send:"Envoyer le commentaire",loading:"Chargement des commentaires …",empty:"Aucun commentaire pour le moment.",pending:"Commentaire enregistré. Il apparaîtra après validation.",error:"Le commentaire n’a pas pu être envoyé."},
+ ar:{name:"الاسم أو اسم مستعار",text:"التعليق",send:"إرسال التعليق",loading:"جارٍ تحميل التعليقات…",empty:"لا توجد تعليقات حتى الآن.",pending:"تم حفظ التعليق وسيظهر بعد الموافقة عليه.",error:"تعذر إرسال التعليق."},
+ kab:{name:"Isem neɣ isem n useqdac",text:"Awennit",send:"Azen awennit",loading:"Awenniten la d-ttalin…",empty:"Ulac awennit ar tura.",pending:"Awennit yettwasekles. Ad d-iban seld asentem.",error:"Ur izmir ara ad yettwazen uwennit."}
+};
+function currentCommentUi(lang){return commentUi[lang]||commentUi.en}
+function updateCommentUi(lang){
+ const u=currentCommentUi(lang);
+ if(window.commentName)commentName.placeholder=u.name;
+ if(window.commentText)commentText.placeholder=u.text;
+ if(window.commentSend)commentSend.textContent=u.send;
+ if(window.commentsLoading&&!commentsList.querySelector('.comment-item'))commentsLoading.textContent=u.loading;
+}
+async function loadComments(){
+ const u=currentCommentUi(document.documentElement.lang);
+ commentsList.innerHTML=`<p class="muted" id="commentsLoading"></p>`;
+ commentsLoading.textContent=u.loading;
+ try{
+  const r=await fetch(`${COMMENTS_API}/comments?page_id=${encodeURIComponent(COMMENTS_PAGE)}`,{cache:"no-store"});
+  if(!r.ok)throw new Error("load");
+  const d=await r.json();
+  commentsList.innerHTML="";
+  const items=Array.isArray(d.comments)?d.comments:[];
+  if(!items.length){const p=document.createElement("p");p.className="muted";p.textContent=u.empty;commentsList.appendChild(p);return}
+  items.slice().reverse().forEach(c=>{const box=document.createElement("article");box.className="comment-item";const head=document.createElement("div");head.className="comment-head";const av=document.createElement("span");av.className="comment-avatar";av.textContent=(c.name||"?").trim().charAt(0).toUpperCase()||"?";const n=document.createElement("strong");n.dir="auto";n.textContent=c.name;const p=document.createElement("p");p.dir="auto";p.textContent=c.comment;head.append(av,n);box.append(head,p);commentsList.appendChild(box)})
+ }catch(e){commentsList.innerHTML="";const p=document.createElement("p");p.className="muted";p.textContent=u.error;commentsList.appendChild(p)}
+}
+commentForm.addEventListener("submit",async e=>{
+ e.preventDefault();
+ const u=currentCommentUi(document.documentElement.lang);
+ commentStatus.textContent="";commentSend.disabled=true;
+ try{
+  const r=await fetch(`${COMMENTS_API}/comments`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({page_id:COMMENTS_PAGE,name:commentName.value.trim(),comment:commentText.value.trim(),website:commentWebsite.value})});
+  if(!r.ok)throw new Error("send");
+  commentText.value="";commentWebsite.value="";commentStatus.textContent=u.pending
+ }catch(e){commentStatus.textContent=u.error}
+ finally{commentSend.disabled=false}
+});
 fetch("https://abacus.jasoncameron.dev/hit/yasmine-erfahrungen-7f3c91a6/pageviews").then(r=>r.json()).then(d=>count.textContent=d.value).catch(()=>count.textContent="–");
 setLang(localStorage.getItem("yasmine-lang") in t?localStorage.getItem("yasmine-lang"):"ar");
+loadComments();
 </script>
-<script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
 </body></html>
