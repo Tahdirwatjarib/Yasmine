@@ -52,7 +52,8 @@ h2{font-family:Georgia,serif;color:var(--g2);font-size:clamp(1.5rem,3vw,2rem);li
 <div id="story"></div>
 <section class="pdf-download" id="pdfdownload"><h2 id="pdftitle"></h2><p id="pdftext"></p><a class="pdfbtn" id="pdfbtn" href="yasmine-chaouche-dokumentation.pdf" download>⬇ <span id="pdfbtntext"></span></a><div class="pdfnote" id="pdfnote"></div></section>
 <section><h2 id="gallerytitle"></h2><p class="muted" id="galleryintro"></p><div class="gallery" id="gallery"></div><div class="anon" id="anon"></div></section>
-<section class="forum"><h2 id="forumtitle"></h2><p id="forumtext"></p><a class="goldbtn" id="forumbtn" target="_blank" rel="noopener" href="https://tahdir-wa-tajarib.freeforums.net/thread/2/tajarib-tahdhirat-ihtiyal-atifi-zawaj"></a></section>
+<section id="complaintMount"></section>
+<section id="musicMount"></section>
 <section class="comments"><h2 id="commentstitle"></h2><p class="muted" id="commentshelp"></p>
 <div id="commentsList" class="comment-list"><p class="muted" id="commentsLoading"></p></div>
 <form id="commentForm" class="comment-form">
@@ -63,6 +64,7 @@ h2{font-family:Georgia,serif;color:var(--g2);font-size:clamp(1.5rem,3vw,2rem);li
 <button id="commentSend" type="submit"></button>
 <p id="commentStatus" class="comment-status muted" role="status"></p>
 </form></section>
+<section class="forum"><h2 id="forumtitle"></h2><p id="forumtext"></p><a class="goldbtn" id="forumbtn" target="_blank" rel="noopener" href="https://tahdir-wa-tajarib.freeforums.net/thread/2/tajarib-tahdhirat-ihtiyal-atifi-zawaj"></a></section>
 <section><h2 id="legaltitle"></h2><div id="legal"></div></section>
 <div class="closing" id="closing"></div><div class="dua">حَسْبِيَ اللَّهُ وَنِعْمَ الْوَكِيلُ</div>
 </div></main>
@@ -224,6 +226,14 @@ function updateNotice(lang){
  if(window.updateNoticeText)updateNoticeText.textContent=u.text;
 }
 
+const musicSectionUi={
+ de:"Musik / musikalische Verarbeitung",
+ en:"Music / artistic reflection",
+ fr:"Musique / expression artistique",
+ ar:"الموسيقى / معالجة فنية للتجربة",
+ kab:"Music / asefru amezgun n termit"
+};
+
 const musicUi={
  de:{title:"Yasmine Chaouche – Le masque est tombé",text:"Ein Musikvideo als persönliche künstlerische Verarbeitung meiner Erfahrung – auf Französisch und Arabisch.",audio:"MP3 herunterladen",lyrics:"Songtext als PDF",note:"Das Video wird über YouTube abgespielt. Audio und Songtext können separat heruntergeladen werden."},
  en:{title:"Yasmine Chaouche – Le masque est tombé",text:"A music video as a personal artistic reflection on my experience, in French and Arabic.",audio:"Download MP3",lyrics:"Lyrics as PDF",note:"The video is played via YouTube. The audio and lyrics can be downloaded separately."},
@@ -233,13 +243,14 @@ const musicUi={
 };
 function insertMusicBlock(lang){
  const u=musicUi[lang]||musicUi.ar;
- const firstVideo=story.querySelector('.video-summary');
- const intro=story.querySelector('.intro');
- if(!firstVideo&&!intro)return;
+ const mount=document.getElementById("musicMount");
+ if(!mount)return;
+ mount.className="music-processing";
+ mount.innerHTML=`<h2>${musicSectionUi[lang]||musicSectionUi.ar}</h2>`;
  const sec=document.createElement('section');
  sec.className='music-feature';
  sec.innerHTML=`<h2>${u.title}</h2><p class="music-sub">${u.text}</p><div class="video-frame"><iframe src="https://www.youtube-nocookie.com/embed/IMGarOP8KUM?rel=0" title="${u.title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><div class="music-actions"><a class="music-btn primary" href="Yasmine-Chaouche-le-masque-est-tombe.mp3" download>⬇ ${u.audio}</a><a class="music-btn secondary" href="Yasmine-Chaouche-Le-masque-est-tombe-Songtext.pdf" download>📄 ${u.lyrics}</a></div><div class="music-note">${u.note}</div>`;
- (firstVideo||intro).insertAdjacentElement('afterend',sec);
+ mount.appendChild(sec);
 }
 
 
@@ -253,31 +264,27 @@ const track3Ui={
 };
 function insertTrack3Block(lang){
  const u=track3Ui[lang]||track3Ui.ar;
- const prev=story.querySelector('.music-feature');
- const firstVideo=story.querySelector('.video-summary');
- const intro=story.querySelector('.intro');
- if(!prev&&!firstVideo&&!intro)return;
+ const mount=document.getElementById("musicMount");
+ if(!mount)return;
  const sec=document.createElement('section');
  sec.className='music-feature track3-feature';
  sec.innerHTML=`<h2>${u.title}</h2><p class="music-sub">${u.text}</p><div class="video-frame"><iframe src="https://www.youtube-nocookie.com/embed/T61_O4IQ1-k?rel=0" title="${u.title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><div class="music-actions"><a class="music-btn primary" href="Yasmine-Chaouche-a-propos-de-Cent-Quatre-vingts-hommes.mp3" download>⬇ ${u.audio}</a><a class="music-btn secondary" href="Paroles-de-chansons-de-Yasmine-Chaouche.pdf" download>📄 ${u.lyrics}</a></div><div class="music-note">${u.note}</div>`;
- (prev||firstVideo||intro).insertAdjacentElement('afterend',sec);
+ mount.appendChild(sec);
 }
 
 const complaintUi={
- de:{title:"Anonymisierte Anzeige als PDF",text:"Die anonymisierte Fassung der Anzeige kann hier als PDF heruntergeladen werden.",button:"Anzeige herunterladen"},
- en:{title:"Anonymised report as PDF",text:"The anonymised version of the report can be downloaded here as a PDF.",button:"Download report"},
- fr:{title:"Plainte anonymisée au format PDF",text:"La version anonymisée de la plainte peut être téléchargée ici au format PDF.",button:"Télécharger la plainte"},
- ar:{title:"نسخة مجهولة البيانات من الشكوى بصيغة PDF",text:"يمكن تحميل النسخة التي أُخفيت منها البيانات الخاصة هنا بصيغة PDF.",button:"تحميل الشكوى"},
- kab:{title:"Asefter anonymisé PDF",text:"Lqem anonymisé n usefter yezmer ad d-yettwasider dagi s PDF.",button:"Sider PDF"}
+ de:{title:"Anonymisierte Anzeige als PDF",text:"Wie bereits erwähnt, habe ich Yasmine wegen der Vorkommnisse angezeigt, um andere Opfer in Zukunft zu schützen. Die anonymisierte Anzeige kann hier vollständig heruntergeladen werden.",button:"Anzeige herunterladen"},
+ en:{title:"Anonymised report as PDF",text:"As already mentioned, I reported Yasmine because of the incidents described here in order to protect other victims in the future. The anonymised report can be downloaded here in full.",button:"Download report"},
+ fr:{title:"Plainte anonymisée au format PDF",text:"Comme déjà mentionné, j’ai porté plainte contre Yasmine en raison des faits décrits ici afin de protéger d’autres victimes à l’avenir. La version anonymisée de la plainte peut être téléchargée ici dans son intégralité.",button:"Télécharger la plainte"},
+ ar:{title:"نسخة مجهولة البيانات من الشكوى بصيغة PDF",text:"كما ذكرت سابقًا، قدمت شكوى ضد ياسمين بسبب الوقائع المذكورة هنا، بهدف حماية ضحايا آخرين في المستقبل. ويمكن تحميل النسخة المجهولة البيانات من الشكوى كاملة من هنا.",button:"تحميل الشكوى"},
+ kab:{title:"Asefter anonymisé PDF",text:"Akken i d-nniɣ yakan, ssawḍeɣ acekki ɣef Yasmine ɣef wayen iḍran, akken ad ttwaḥerzen wiyaḍ seg termit am tinna deg uzekka. Lqem anonymisé n usefter yezmer ad d-yettwasider akk dagi.",button:"Sider PDF"}
 };
 function insertComplaintBlock(lang){
  const u=complaintUi[lang]||complaintUi.ar;
- const prev=story.querySelector('.track3-feature')||story.querySelector('.music-feature')||story.querySelector('.video-summary')||story.querySelector('.intro');
- if(!prev)return;
- const sec=document.createElement('section');
- sec.className='pdf-download complaint-feature';
- sec.innerHTML=`<h2>${u.title}</h2><p>${u.text}</p><a class="pdfbtn" href="Paroles-de-Yasmine-Chaouche-de-Bourouba.pdf" download>⬇ <span>${u.button}</span></a>`;
- prev.insertAdjacentElement('afterend',sec);
+ const mount=document.getElementById("complaintMount");
+ if(!mount)return;
+ mount.className='pdf-download complaint-feature';
+ mount.innerHTML=`<h2>${u.title}</h2><p>${u.text}</p><a class="pdfbtn" href="Paroles-de-Yasmine-Chaouche-de-Bourouba.pdf" download>⬇ <span>${u.button}</span></a>`;
 }
 
 const files=Array.from({length:19},(_,i)=>`bild${String(i+1).padStart(2,"0")}.jpg`);
@@ -309,6 +316,18 @@ function openLb(src,cap){lbimg.src=src;lbimg.alt=cap;lbcap.textContent=cap;light
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeReport();closeLb()}});
 const COMMENTS_API="https://yasmine-comments.gabgabgab123.workers.dev";
 const COMMENTS_PAGE="yasmine-erfahrungen-main";
+const legacyComments=[
+ {id:-2,parent_id:null,name:"أحمد",comment:"أنا أحمد من بوروبة، ووجدت هذه الصفحة بالصدفة. متى سيتم نشر المزيد من المعلومات؟ أود معرفة المزيد عن القصة والوثائق الموجودة.",legacy:true},
+ {id:-1,parent_id:-2,name:"Admin",comment:"مرحبًا أحمد، شكرًا لاهتمامك. سيتم استكمال الصفحة وتحديثها تدريجيًا، وسيتم نشر المزيد من التفاصيل والوثائق كلما كان ذلك ممكنًا، مع الاستمرار طبعًا في احترام الخصوصية والحقوق الشخصية وحقوق الأطراف الأخرى.",legacy:true},
+ {id:-4,parent_id:null,name:"سمير",comment:"كيف يمكن لشخص أن يتعامل مع الناس بكل هذا الكذب والزيف؟ هذا التصرف مقرف فعلًا. اللعب بالحب والثقة والمستقبل واستغلال الناس أمر مخزٍ.",legacy:true},
+ {id:-3,parent_id:-4,name:"Admin",comment:"أتفهم أن هذا الأمر أغضبك كثيرًا، لكن يرجى التركيز على انتقاد التصرفات وتجنب الإهانات الشخصية. شكرًا.",legacy:true},
+ {id:-5,parent_id:null,name:"ياسين",comment:"مثل هذا السلوك عار ويعطي صورة سيئة عن بوروبة والجزائر. لا يحق لأحد أن يتلاعب بالحب والثقة وأموال الآخرين. شكرًا على التحذير.",legacy:true},
+ {id:-6,parent_id:null,name:"Hasan Abil",comment:"من يلعب بمشاعر الناس، ويطلب المال والهدايا باستمرار، ويخدع أكثر من رجل، فعليه أن يخجل من نفسه. شكرًا على التحذير. الله عادل، والحقيقة تظهر في النهاية.",legacy:true},
+ {id:-7,parent_id:null,name:"Suhad",comment:"أجد هذا السلوك مقززًا. التلاعب بالمشاعر والثقة ووعود المستقبل، مع طلب المال والهدايا مرارًا وتكرارًا ثم قبولها، أمر يصعب عليّ تبريره. شكرًا على هذا التحذير. أتمنى أن يقرأه رجال آخرون في الوقت المناسب وأن ينتبهوا أكثر. بعض الناس لا يُظهرون حقيقتهم إلا بعد فوات الأوان.",legacy:true},
+ {id:-8,parent_id:null,name:"Jewded",comment:"Very interesting. I hope more information and photos will be added soon.",legacy:true},
+ {id:-9,parent_id:null,name:"Ahmad",comment:"أمر لا يُصدَّق فعلاً. شكرًا على هذا التحذير. أحيانًا يختبئ خلف المظهر اللطيف والجاد شيء مختلف تمامًا. أسأل الله أن يعطي كل إنسان ما يستحقه على أفعاله.",legacy:true}
+];
+
 const commentUi={
  de:{name:"Name oder Pseudonym",text:"Kommentar",send:"Kommentar senden",loading:"Kommentare werden geladen …",empty:"Noch keine Kommentare.",pending:"Kommentar gespeichert. Er wird nach Freigabe veröffentlicht.",error:"Kommentar konnte nicht gesendet werden.",reply:"Antworten",cancel:"Abbrechen",replying:"Antwort auf",replyText:"Antwort schreiben"},
  en:{name:"Name or pseudonym",text:"Comment",send:"Send comment",loading:"Loading comments …",empty:"No comments yet.",pending:"Comment saved. It will appear after approval.",error:"The comment could not be sent.",reply:"Reply",cancel:"Cancel",replying:"Replying to",replyText:"Write a reply"},
@@ -355,7 +374,7 @@ function buildComment(c,childrenByParent,u,depth=0){
  }
  const p=document.createElement("p");p.dir="auto";p.textContent=c.comment;
  const actions=document.createElement("div");actions.className="comment-actions";
- const rb=document.createElement("button");rb.type="button";rb.className="comment-reply-btn";rb.textContent=u.reply;rb.addEventListener("click",()=>startReply(c.id,c.name));actions.appendChild(rb);
+ if(!c.legacy){const rb=document.createElement("button");rb.type="button";rb.className="comment-reply-btn";rb.textContent=u.reply;rb.addEventListener("click",()=>startReply(c.id,c.name));actions.appendChild(rb);}
  box.append(head,p,actions);
  const kids=(childrenByParent.get(Number(c.id))||[]).slice().sort((a,b)=>Number(a.id)-Number(b.id));
  if(kids.length){
@@ -365,6 +384,15 @@ function buildComment(c,childrenByParent,u,depth=0){
  }
  return box;
 }
+function commentKey(c){return `${String(c.name||"").trim().toLowerCase()}\n${String(c.comment||"").trim()}`;}
+function renderComments(items,u){
+ commentsList.innerHTML="";
+ if(!items.length){const p=document.createElement("p");p.className="muted";p.textContent=u.empty;commentsList.appendChild(p);return}
+ const childrenByParent=new Map();
+ items.forEach(c=>{if(c.parent_id!==null&&c.parent_id!==undefined){const k=Number(c.parent_id);if(!childrenByParent.has(k))childrenByParent.set(k,[]);childrenByParent.get(k).push(c)}});
+ const roots=items.filter(c=>c.parent_id===null||c.parent_id===undefined).slice().sort((a,b)=>Number(b.id)-Number(a.id));
+ roots.forEach(c=>commentsList.appendChild(buildComment(c,childrenByParent,u,0)));
+}
 async function loadComments(){
  const u=currentCommentUi(document.documentElement.lang);
  commentsList.innerHTML=`<p class="muted" id="commentsLoading"></p>`;
@@ -372,14 +400,12 @@ async function loadComments(){
  try{
   const r=await fetch(`${COMMENTS_API}/comments?page_id=${encodeURIComponent(COMMENTS_PAGE)}`,{cache:"no-store"});
   if(!r.ok)throw new Error("load");
-  const d=await r.json();commentsList.innerHTML="";
-  const items=Array.isArray(d.comments)?d.comments:[];
-  if(!items.length){const p=document.createElement("p");p.className="muted";p.textContent=u.empty;commentsList.appendChild(p);return}
-  const childrenByParent=new Map();
-  items.forEach(c=>{if(c.parent_id!==null&&c.parent_id!==undefined){const k=Number(c.parent_id);if(!childrenByParent.has(k))childrenByParent.set(k,[]);childrenByParent.get(k).push(c)}});
-  const roots=items.filter(c=>c.parent_id===null||c.parent_id===undefined).slice().sort((a,b)=>Number(b.id)-Number(a.id));
-  roots.forEach(c=>commentsList.appendChild(buildComment(c,childrenByParent,u,0)));
- }catch(e){commentsList.innerHTML="";const p=document.createElement("p");p.className="muted";p.textContent=u.error;commentsList.appendChild(p)}
+  const d=await r.json();
+  const live=Array.isArray(d.comments)?d.comments:[];
+  const liveKeys=new Set(live.map(commentKey));
+  const fallback=legacyComments.filter(c=>!liveKeys.has(commentKey(c)));
+  renderComments([...live,...fallback],u);
+ }catch(e){renderComments(legacyComments,u)}
 }
 commentForm.addEventListener("submit",async e=>{
  e.preventDefault();
