@@ -272,6 +272,24 @@ function insertTrack3Block(lang){
  mount.appendChild(sec);
 }
 
+/* Viertes Musikvideo: nur ergänzt, bestehende Inhalte unverändert */
+const track4Ui={
+ de:{title:"Yasmine Chaouche Bourouba – Aktar, Aktar, Aktar… Plus, Plus, Plus – et le jeu est fini",text:"Viertes Musikvideo dieser Seite – eine persönliche künstlerische Verarbeitung meiner Erfahrung.",audio:"MP3 herunterladen",lyrics:"Songtext als PDF",note:"Das Video wird über YouTube abgespielt. Audio und Songtext können separat heruntergeladen werden."},
+ en:{title:"Yasmine Chaouche Bourouba – Aktar, Aktar, Aktar… Plus, Plus, Plus – et le jeu est fini",text:"The fourth music video on this page – a personal artistic reflection on my experience.",audio:"Download MP3",lyrics:"Lyrics as PDF",note:"The video is played via YouTube. The audio and lyrics can be downloaded separately."},
+ fr:{title:"Yasmine Chaouche Bourouba – Aktar, Aktar, Aktar… Plus, Plus, Plus – et le jeu est fini",text:"Quatrième clip musical de cette page – une mise en musique personnelle et artistique de mon expérience.",audio:"Télécharger le MP3",lyrics:"Paroles en PDF",note:"La vidéo est diffusée via YouTube. L’audio et les paroles peuvent être téléchargés séparément."},
+ ar:{title:"Yasmine Chaouche Bourouba – Aktar, Aktar, Aktar… Plus, Plus, Plus – et le jeu est fini",text:"الفيديو الموسيقي الرابع في هذه الصفحة – معالجة فنية شخصية لتجربتي.",audio:"تحميل MP3",lyrics:"كلمات الأغنية PDF",note:"يتم تشغيل الفيديو عبر YouTube، ويمكن تحميل الصوت وكلمات الأغنية بشكل منفصل."},
+ kab:{title:"Yasmine Chaouche Bourouba – Aktar, Aktar, Aktar… Plus, Plus, Plus – et le jeu est fini",text:"Video n music wis kuẓ deg usebter-a – d asefru amezgun n termit-iw s tmuɣli-iw tusligt.",audio:"Sider MP3",lyrics:"Sider lyrics PDF",note:"Video yetturar seg YouTube. Audio d lyrics zemren ad d-ttwasidren iman-nsen."}
+};
+function insertTrack4Block(lang){
+ const u=track4Ui[lang]||track4Ui.ar;
+ const mount=document.getElementById("musicMount");
+ if(!mount)return;
+ const sec=document.createElement('section');
+ sec.className='music-feature track4-feature';
+ sec.innerHTML=`<h2>${u.title}</h2><p class="music-sub">${u.text}</p><div class="video-frame"><iframe src="https://www.youtube-nocookie.com/embed/_bvBIw4QkYE?rel=0" title="${u.title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><div class="music-actions"><a class="music-btn primary" href="Yasmine-Chaouche-Bourouba-Aktar-Aktar-Aktar.mp3" download>⬇ ${u.audio}</a><a class="music-btn secondary" href="Yasmine-Chaouche-Bourouba-Plus-Plus-Plus-et-le-jeu-est-fini.pdf" download>📄 ${u.lyrics}</a></div><div class="music-note">${u.note}</div>`;
+ mount.appendChild(sec);
+}
+
 const complaintUi={
  de:{title:"Anonymisierte Anzeige als PDF",text:"Wie bereits erwähnt, habe ich Yasmine wegen der Vorkommnisse angezeigt, um andere Opfer in Zukunft zu schützen. Die anonymisierte Anzeige kann hier vollständig heruntergeladen werden.",button:"Anzeige herunterladen"},
  en:{title:"Anonymised report as PDF",text:"As already mentioned, I reported Yasmine because of the incidents described here in order to protect other victims in the future. The anonymised report can be downloaded here in full.",button:"Download report"},
@@ -307,6 +325,7 @@ const setLangOriginalForExtraDownloads=setLang;
 setLang=function(lang){
  setLangOriginalForExtraDownloads(lang);
  insertTrack3Block(lang);
+ insertTrack4Block(lang);
  insertComplaintBlock(lang);
 };
 
